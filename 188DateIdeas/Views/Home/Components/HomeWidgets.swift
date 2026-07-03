@@ -12,43 +12,44 @@ struct HomeHeroBannerView: View {
             Image("HomeHero")
                 .resizable()
                 .scaledToFill()
-                .frame(height: 168)
+                .frame(minHeight: 176)
                 .clipped()
 
             LinearGradient(
-                colors: [.black.opacity(0.55), .black.opacity(0.15), .clear],
+                colors: [.black.opacity(0.62), .black.opacity(0.2), .clear],
                 startPoint: .bottom,
                 endPoint: .top
             )
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text(greeting)
-                    .font(.caption.weight(.semibold))
-                    .foregroundColor(.white.opacity(0.85))
+                    .font(.footnote.weight(.semibold))
+                    .foregroundColor(.white.opacity(0.92))
                     .textCase(.uppercase)
-                    .tracking(0.6)
 
                 Text(coupleNames)
-                    .font(.title2.weight(.bold))
+                    .font(.title3.weight(.bold))
                     .foregroundColor(.white)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 HStack(spacing: 6) {
                     Image(systemName: "sparkles")
-                        .font(.caption2.weight(.bold))
-                    Text("\(readyCount) ideas ready to explore")
-                        .font(.caption.weight(.medium))
+                        .font(.footnote.weight(.semibold))
+                    Text("\(readyCount) ideas ready")
+                        .font(.footnote.weight(.medium))
+                        .lineLimit(1)
                 }
-                .foregroundColor(.white.opacity(0.9))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(.white.opacity(0.2))
+                .foregroundColor(.white.opacity(0.95))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 7)
+                .background(.white.opacity(0.22))
                 .clipShape(Capsule())
             }
             .padding(18)
         }
-        .frame(height: 168)
+        .frame(minHeight: 176)
         .clipShape(RoundedRectangle(cornerRadius: AppDesign.cornerRadius, style: .continuous))
         .compositingGroup()
         .shadow(color: AppColor.accent.opacity(0.22), radius: 12, y: 5)
@@ -68,19 +69,23 @@ struct HomeWidgetGridView: View {
     let onTonight: () -> Void
     let onJar: () -> Void
 
-    private let columns = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
-    ]
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    private var columns: [GridItem] {
+        if horizontalSizeClass == .regular {
+            return [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
+        }
+        return [GridItem(.flexible(), spacing: 12)]
+    }
 
     var body: some View {
         LazyVGrid(columns: columns, spacing: 12) {
             HomeStreakWidget(streak: streak, badges: badges, onTap: onBadges)
             HomeChallengeWidget(progress: challengeProgress, onTap: onChallenge)
             HomeTonightWidget(idea: featuredIdea, onTap: onTonight)
-                .gridCellColumns(2)
+                .gridCellColumns(horizontalSizeClass == .regular ? 2 : 1)
             HomeJarWidget(count: jarCount, onTap: onJar)
-                .gridCellColumns(2)
+                .gridCellColumns(horizontalSizeClass == .regular ? 2 : 1)
         }
     }
 }
@@ -92,10 +97,10 @@ struct HomeStreakWidget: View {
 
     var body: some View {
         Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Image(systemName: "flame.fill")
-                        .font(.title3)
+                        .font(.title2)
                         .foregroundStyle(
                             LinearGradient(
                                 colors: [Color(hex: "FF6B6B"), Color(hex: "FDCB6E")],
@@ -105,25 +110,27 @@ struct HomeStreakWidget: View {
                         )
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .font(.caption2.weight(.bold))
-                        .foregroundColor(AppColor.textSecondary.opacity(0.4))
+                        .font(.footnote.weight(.semibold))
+                        .foregroundColor(AppColor.textSecondary.opacity(0.5))
                 }
 
                 Text("\(streak)")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .font(.system(.largeTitle, design: .rounded, weight: .bold))
                     .foregroundColor(AppColor.textPrimary)
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Week Streak")
-                        .font(.caption.weight(.semibold))
+                        .font(AppDesign.Typography.widgetTitle)
                         .foregroundColor(AppColor.textPrimary)
                     Text("\(badges) badges earned")
-                        .font(.caption2)
+                        .font(AppDesign.Typography.widgetMeta)
                         .foregroundColor(AppColor.textSecondary)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
             .padding(AppDesign.cardPadding)
-            .frame(maxWidth: .infinity, minHeight: 130, alignment: .leading)
+            .frame(maxWidth: .infinity, minHeight: 148, alignment: .leading)
             .tintedCard(gradient: AppDesign.warmWidget, accent: Color(hex: "FF6B6B"), elevation: .raised)
         }
         .buttonStyle(.plain)
@@ -136,42 +143,44 @@ struct HomeChallengeWidget: View {
 
     var body: some View {
         Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Image(systemName: "trophy.fill")
-                        .font(.title3)
+                        .font(.title2)
                         .foregroundColor(Color(hex: "6C5CE7"))
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .font(.caption2.weight(.bold))
-                        .foregroundColor(AppColor.textSecondary.opacity(0.4))
+                        .font(.footnote.weight(.semibold))
+                        .foregroundColor(AppColor.textSecondary.opacity(0.5))
                 }
 
                 ZStack {
                     Circle()
                         .stroke(Color(hex: "6C5CE7").opacity(0.15), lineWidth: 6)
-                        .frame(width: 52, height: 52)
+                        .frame(width: 56, height: 56)
                     Circle()
                         .trim(from: 0, to: progress.isActive ? progress.progress : 0)
                         .stroke(Color(hex: "6C5CE7"), style: StrokeStyle(lineWidth: 6, lineCap: .round))
-                        .frame(width: 52, height: 52)
+                        .frame(width: 56, height: 56)
                         .rotationEffect(.degrees(-90))
                     Text(progress.isActive ? "\(progress.weeksCompleted)" : "—")
-                        .font(.headline.weight(.bold))
+                        .font(.title3.weight(.bold))
                         .foregroundColor(AppColor.textPrimary)
                 }
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Challenge")
-                        .font(.caption.weight(.semibold))
+                        .font(AppDesign.Typography.widgetTitle)
                         .foregroundColor(AppColor.textPrimary)
                     Text(progress.isActive ? "\(progress.targetWeeks)-week goal" : "Start 30 days")
-                        .font(.caption2)
+                        .font(AppDesign.Typography.widgetMeta)
                         .foregroundColor(AppColor.textSecondary)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
             .padding(AppDesign.cardPadding)
-            .frame(maxWidth: .infinity, minHeight: 130, alignment: .leading)
+            .frame(maxWidth: .infinity, minHeight: 148, alignment: .leading)
             .tintedCard(gradient: AppDesign.coolWidget, accent: Color(hex: "6C5CE7"), elevation: .raised)
         }
         .buttonStyle(.plain)
@@ -184,51 +193,49 @@ struct HomeTonightWidget: View {
 
     var body: some View {
         Button(action: onTap) {
-            HStack(spacing: 0) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Label("Tonight's Pick", systemImage: "moon.stars.fill")
-                        .font(.caption.weight(.bold))
-                        .foregroundColor(AppColor.accent)
-                        .labelStyle(.titleAndIcon)
+            VStack(alignment: .leading, spacing: 14) {
+                Label("Tonight's Pick", systemImage: "moon.stars.fill")
+                    .font(AppDesign.Typography.widgetTitle)
+                    .foregroundColor(AppColor.accent)
+                    .labelStyle(.titleAndIcon)
 
-                    if let idea {
-                        Text(idea.title)
-                            .font(.headline.weight(.bold))
-                            .foregroundColor(AppColor.textPrimary)
-                            .lineLimit(2)
-                            .multilineTextAlignment(.leading)
+                if let idea {
+                    Text(idea.title)
+                        .font(.headline.weight(.bold))
+                        .foregroundColor(AppColor.textPrimary)
+                        .lineLimit(3)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
 
-                        HStack(spacing: 8) {
-                            Text(idea.category.icon)
-                            Text(idea.budget.icon)
-                            Text("\(idea.timeRequired) min")
-                                .font(.caption2.weight(.medium))
-                                .foregroundColor(AppColor.textSecondary)
-                        }
-                        .font(.caption)
-                    } else {
-                        Text("Add ideas to get personalized picks")
-                            .font(.subheadline.weight(.medium))
+                    HStack(spacing: 10) {
+                        Text(idea.category.icon)
+                        Text(idea.budget.icon)
+                        Text("\(idea.timeRequired) min")
+                            .font(AppDesign.Typography.widgetMeta)
                             .foregroundColor(AppColor.textSecondary)
-                            .lineLimit(2)
                     }
-
-                    Spacer(minLength: 0)
-
-                    Text(idea != nil ? "View details" : "Browse ideas")
-                        .font(.caption.weight(.semibold))
-                        .foregroundColor(AppColor.accent)
+                    .font(.footnote)
+                } else {
+                    Text("Add ideas to get personalized picks")
+                        .font(AppDesign.Typography.widgetBody)
+                        .foregroundColor(AppColor.textSecondary)
+                        .lineLimit(3)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(AppDesign.cardPadding)
-                .frame(maxWidth: .infinity, alignment: .leading)
 
                 Image("HomeDateNight")
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 120, height: 140)
-                    .clipped()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 120)
+                    .clipShape(RoundedRectangle(cornerRadius: AppDesign.smallRadius, style: .continuous))
+
+                Text(idea != nil ? "View details" : "Browse ideas")
+                    .font(AppDesign.Typography.widgetMeta.weight(.semibold))
+                    .foregroundColor(AppColor.accent)
             }
-            .frame(height: 140)
+            .padding(AppDesign.cardPadding)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .premiumCard(accent: AppColor.accent.opacity(0.25), elevation: .floating)
         }
         .buttonStyle(.plain)
@@ -241,31 +248,34 @@ struct HomeJarWidget: View {
 
     var body: some View {
         Button(action: onTap) {
-            HStack(spacing: 12) {
+            HStack(spacing: 14) {
                 ZStack {
                     Circle()
                         .fill(AppColor.accentSecondary.opacity(0.12))
-                        .frame(width: 44, height: 44)
+                        .frame(width: 48, height: 48)
                     Text("🫙")
                         .font(.title2)
                 }
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Date Jar")
-                        .font(.subheadline.weight(.semibold))
+                        .font(AppDesign.Typography.widgetTitle)
                         .foregroundColor(AppColor.textPrimary)
                     Text(count == 0 ? "Add secret ideas" : "\(count) secrets waiting")
-                        .font(.caption)
+                        .font(AppDesign.Typography.widgetMeta)
                         .foregroundColor(AppColor.textSecondary)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
 
-                Spacer()
+                Spacer(minLength: 8)
 
                 Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
-                    .foregroundColor(AppColor.textSecondary.opacity(0.4))
+                    .font(.footnote.weight(.semibold))
+                    .foregroundColor(AppColor.textSecondary.opacity(0.5))
             }
             .padding(AppDesign.cardPadding)
+            .frame(maxWidth: .infinity, minHeight: 76, alignment: .leading)
             .tintedCard(
                 gradient: AppDesign.tintedGradient(AppColor.accentSecondary),
                 accent: AppColor.accentSecondary,
@@ -285,41 +295,44 @@ struct HomeStatsBarView: View {
     let favorites: Int
     let micro: Int
 
+    private let columns = [
+        GridItem(.flexible(), spacing: 8),
+        GridItem(.flexible(), spacing: 8),
+        GridItem(.flexible(), spacing: 8)
+    ]
+
     var body: some View {
-        HStack(spacing: 0) {
+        LazyVGrid(columns: columns, spacing: 8) {
             statItem(value: total, label: "Total", icon: "lightbulb.fill", color: AppColor.accent)
-            divider
             statItem(value: unused, label: "Ready", icon: "sparkles", color: AppColor.accentSecondary)
-            divider
             statItem(value: used, label: "Done", icon: "checkmark.circle.fill", color: AppColor.textSecondary)
-            divider
             statItem(value: favorites, label: "Loved", icon: "heart.fill", color: .red)
-            divider
             statItem(value: micro, label: "Micro", icon: "bolt.fill", color: Color(hex: "FDCB6E"))
         }
-        .padding(.vertical, 14)
+        .padding(12)
         .premiumCard(elevation: .raised)
     }
 
-    private var divider: some View {
-        Rectangle()
-            .fill(Color.black.opacity(0.06))
-            .frame(width: 1, height: 36)
-    }
-
     private func statItem(value: Int, label: String, icon: String, color: Color) -> some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.caption2)
+                .font(.footnote)
                 .foregroundColor(color)
             Text("\(value)")
-                .font(.subheadline.weight(.bold))
+                .font(AppDesign.Typography.statValue)
                 .foregroundColor(AppColor.textPrimary)
             Text(label)
-                .font(.system(size: 9, weight: .medium))
+                .font(AppDesign.Typography.statLabel)
                 .foregroundColor(AppColor.textSecondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
         }
         .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: AppDesign.smallRadius, style: .continuous)
+                .fill(color.opacity(0.06))
+        )
     }
 }
 
@@ -407,23 +420,27 @@ struct HomeCategoryCard: View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: 10) {
                 Text(category.icon)
-                    .font(.system(size: 28))
-                    .frame(width: 48, height: 48)
+                    .font(.system(size: 30))
+                    .frame(width: 52, height: 52)
                     .background(color.opacity(0.15))
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 
                 Text(category.rawValue)
-                    .font(.subheadline.weight(.bold))
+                    .font(AppDesign.Typography.widgetTitle)
                     .foregroundColor(AppColor.textPrimary)
-
-                Text(categorySubtitle)
-                    .font(.caption2)
-                    .foregroundColor(AppColor.textSecondary)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text(categorySubtitle)
+                    .font(AppDesign.Typography.widgetMeta)
+                    .foregroundColor(AppColor.textSecondary)
+                    .lineLimit(3)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding(14)
-            .frame(width: 130, height: 140, alignment: .topLeading)
+            .frame(width: 156, alignment: .topLeading)
             .tintedCard(gradient: AppDesign.tintedGradient(color), accent: color, elevation: .flat)
         }
         .buttonStyle(.plain)

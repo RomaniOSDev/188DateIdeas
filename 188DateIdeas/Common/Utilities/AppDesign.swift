@@ -66,4 +66,14 @@ enum AppDesign {
             endPoint: .bottomTrailing
         )
     }
+
+    // MARK: - Readable Typography (HIG minimum ~11pt)
+
+    enum Typography {
+        static let widgetTitle = Font.subheadline.weight(.semibold)
+        static let widgetBody = Font.footnote.weight(.medium)
+        static let widgetMeta = Font.caption.weight(.medium)
+        static let statValue = Font.headline.weight(.bold)
+        static let statLabel = Font.caption.weight(.semibold)
+    }
 }

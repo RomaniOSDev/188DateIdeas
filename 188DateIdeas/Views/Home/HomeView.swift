@@ -123,10 +123,11 @@ struct SeasonFilterRow: View {
                     ForEach(SeasonTag.allCases, id: \.self) { tag in
                         Button { onTagTap(tag) } label: {
                             Text("\(tag.icon) \(tag.label)")
-                                .font(.caption.weight(.medium))
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .background(AppColor.accentSecondary.opacity(0.08))
+                                .font(.footnote.weight(.medium))
+                                .lineLimit(1)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 10)
+                                .background(AppColor.accentSecondary.opacity(0.1))
                                 .foregroundColor(AppColor.accentSecondary)
                                 .clipShape(Capsule())
                         }

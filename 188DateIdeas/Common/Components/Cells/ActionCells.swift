@@ -17,23 +17,34 @@ struct ActionTileCell: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 12) {
-                IconCircle(emoji: icon, tint: tint)
-                VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    IconCircle(emoji: icon, tint: tint)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundColor(AppColor.textSecondary.opacity(0.5))
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.subheadline.weight(.semibold))
+                        .font(AppDesign.Typography.widgetTitle)
                         .foregroundColor(AppColor.textPrimary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+
                     if let subtitle {
                         Text(subtitle)
-                            .font(.caption2)
+                            .font(AppDesign.Typography.widgetMeta)
                             .foregroundColor(AppColor.textSecondary)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
-                    .foregroundColor(AppColor.textSecondary.opacity(0.5))
             }
+            .frame(maxWidth: .infinity, minHeight: 100, alignment: .topLeading)
             .padding(AppDesign.cardPadding)
             .premiumCard(accent: tint.opacity(0.15), elevation: .raised)
         }

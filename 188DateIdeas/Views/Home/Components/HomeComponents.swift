@@ -51,7 +51,7 @@ struct QuickActionsView: View {
         VStack(alignment: .leading, spacing: 12) {
             SectionHeaderView(title: "Quick Actions")
 
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
                 ActionTileCell(icon: "✨", title: "For You", subtitle: "Personalized", tint: AppColor.accent, action: onPersonalized)
                 ActionTileCell(icon: "⚡", title: "Micro", subtitle: "≤30 min", tint: Color(hex: "FDCB6E"), action: onMicro)
                 ActionTileCell(icon: "🫙", title: "Date Jar", subtitle: "Secret ideas", tint: AppColor.accentSecondary, action: onJar)
